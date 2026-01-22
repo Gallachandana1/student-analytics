@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import pandas as pd
 import numpy as np
@@ -46,15 +46,8 @@ def train_model(data):
 
 @app.route('/')
 def serve_frontend():
-    return send_from_directory('frontend', 'index.html')
+    return send_from_directory('static', 'index.html')
 
-@app.route('/')
-def home():
-    return jsonify({
-        'message': 'Student Success Prediction API',
-        'version': '1.0',
-        'status': 'running'
-    })
 
 @app.route('/api/upload', methods=['POST'])
 def upload_data():
@@ -294,4 +287,5 @@ def get_analytics():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
+
     app.run(host='0.0.0.0', port=port, debug=True)
