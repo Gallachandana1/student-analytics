@@ -3,7 +3,20 @@ let charts = {};
 let allStudents = [];
 
 // Initialize
+// Initialize
 window.onload = async function () {
+    // Configure Chart.js Defaults for Glassmorphism
+    Chart.defaults.font.family = "'Outfit', sans-serif";
+    Chart.defaults.color = '#64748b';
+    Chart.defaults.scale.grid.color = 'rgba(255, 255, 255, 0.1)';
+    Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+    Chart.defaults.plugins.tooltip.titleColor = '#0f172a';
+    Chart.defaults.plugins.tooltip.bodyColor = '#475569';
+    Chart.defaults.plugins.tooltip.borderColor = 'rgba(255, 255, 255, 0.5)';
+    Chart.defaults.plugins.tooltip.borderWidth = 1;
+    Chart.defaults.plugins.tooltip.padding = 12;
+    Chart.defaults.plugins.tooltip.cornerRadius = 10;
+
     await checkConnection();
     loadDashboard();
 };
@@ -153,24 +166,33 @@ window.predictPerformance = async function (event) {
         const result = await response.json();
 
         if (response.ok) {
+            // Enhanced Smart Alerts
+            const alerts = generateSmartAlerts(data, result.predicted_score);
             let insightsHtml = '';
-            if (result.insights && result.insights.length > 0) {
+
+            if (alerts.length > 0) {
                 insightsHtml = `
-                    <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.03); border-radius: 8px;">
-                        <h4 style="margin-bottom: 10px;">💡 Key Insights</h4>
-                        <ul style="padding-left: 20px;">
-                            ${result.insights.map(i => `<li style="margin-bottom: 5px;">${i}</li>`).join('')}
-                        </ul>
+                    <div style="margin-top: 24px;">
+                        <h4 style="margin-bottom: 12px; color: var(--dark); display: flex; align-items: center; gap: 8px;">
+                            <span>🧠</span> AI Insights
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            ${alerts.map(a => `
+                                <div class="alert ${a.type}" style="margin-bottom: 0; padding: 12px; font-size: 0.95em;">
+                                    ${a.message}
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>`;
             }
 
             document.getElementById('predictionResult').innerHTML = `
-                <div class="alert alert-${result.color}" style="display: block; text-align: center;">
-                    <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">${result.status}</div>
-                    <div style="font-size: 3em; font-weight: 800; margin: 15px 0;">${result.predicted_score}%</div>
-                    <div style="font-size: 1.1em; opacity: 0.9;">${result.recommendation}</div>
-                    <div style="margin-top: 15px;">
-                        <span class="risk-badge risk-${result.risk_level.toLowerCase()}">
+                <div class="alert alert-${result.color}" style="display: block; text-align: center; border: 2px solid ${result.color === 'success' ? '#10b981' : result.color === 'warning' ? '#f59e0b' : '#ef4444'}; background: rgba(255,255,255,0.9);">
+                    <div style="font-size: 1.25em; font-weight: 700; margin-bottom: 8px; color: var(--dark);">${result.status}</div>
+                    <div style="font-size: 3.5em; font-weight: 800; margin: 10px 0; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${result.predicted_score}%</div>
+                    <div style="font-size: 1.05em; color: var(--gray-text); font-weight: 500;">${result.recommendation}</div>
+                    <div style="margin-top: 16px;">
+                        <span class="risk-badge risk-${result.risk_level.toLowerCase()}" style="font-size: 1em; padding: 8px 16px;">
                             ${result.risk_level} Risk
                         </span>
                     </div>
@@ -478,4 +500,47 @@ function createFeatureImportanceChart(data) {
 
 function formatLabel(str) {
     return str.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+function generateSmartAlerts(inputs, score) {
+    const alerts = [];
+
+    // Attendance Checking
+    if (inputs.attendance < 70) {
+        alerts.push({
+            type: 'alert-danger',
+            message: '🚨 <strong>Critical Attendance:</strong> Below 70% threshold. Immediate counseling required.'
+        });
+    } else if (inputs.attendance < 85) {
+        alerts.push({
+            type: 'alert-warning',
+            message: '⚠️ <strong>Attendance Warning:</strong> Falling behind. Monitor closely.'
+        });
+    }
+
+    // Study Efficiency (High Hours but Low Performance)
+    if (inputs.study_hours > 15 && score < 60) {
+        alerts.push({
+            type: 'alert-info',
+            message: '💡 <strong>Efficiency Check:</strong> Student is studying a lot (>15h) but performance is low. Review study methods.'
+        });
+    }
+
+    // High Performer Check
+    if (score > 90) {
+        alerts.push({
+            type: 'alert-success',
+            message: '🌟 <strong>Top Talent:</strong> Potential candidate for mentorship programs or advanced placement.'
+        });
+    }
+
+    // Assignments
+    if (inputs.assignments_completed < 80) {
+        alerts.push({
+            type: 'alert-warning',
+            message: '📝 <strong>Missing Work:</strong> Assignment completion is low. Check for blockers.'
+        });
+    }
+
+    return alerts;
 }
