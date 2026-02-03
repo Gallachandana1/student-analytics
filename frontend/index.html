@@ -1,355 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Success Predictive Analytics</title>
+    <title>Edulytics AI - Student Success Platform</title>
+    <!-- Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            color: #667eea;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: #666;
-            font-size: 1.1em;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-left: 15px;
-        }
-
-        .status-connected {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-disconnected {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .nav-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            padding: 12px 25px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            color: #667eea;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .tab-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.5s;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-value {
-            font-size: 2.5em;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .stat-label {
-            font-size: 1em;
-            opacity: 0.9;
-        }
-
-        .upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 15px;
-            padding: 40px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .upload-area:hover {
-            background: rgba(102, 126, 234, 0.1);
-            border-color: #764ba2;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-        }
-
-        input[type="number"], select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border 0.3s;
-        }
-
-        input[type="number"]:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .alert {
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 2px solid #c3e6cb;
-        }
-
-        .alert-warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 2px solid #ffeaa7;
-        }
-
-        .alert-danger {
-            background: #f8d7da;
-            color: #721c24;
-            border: 2px solid #f5c6cb;
-        }
-
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 2px solid #bee5eb;
-        }
-
-        .prediction-result {
-            margin-top: 20px;
-            padding: 25px;
-            border-radius: 10px;
-            font-size: 18px;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 400px;
-            margin-top: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: 600;
-        }
-
-        tr:hover {
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .risk-badge {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .risk-low { background: #d4edda; color: #155724; }
-        .risk-medium { background: #fff3cd; color: #856404; }
-        .risk-high { background: #f8d7da; color: #721c24; }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 20px;
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .insights-list {
-            list-style: none;
-            margin-top: 15px;
-        }
-
-        .insights-list li {
-            padding: 8px 12px;
-            background: rgba(102, 126, 234, 0.1);
-            margin-bottom: 8px;
-            border-radius: 5px;
-            border-left: 4px solid #667eea;
-        }
-    </style>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <div class="container">
         <header>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h1>📊 Student Success Predictive Analytics</h1>
-                    <p class="subtitle">Machine Learning Powered Student Performance Prediction System</p>
-                </div>
-                <div>
-                    <span class="status-badge" id="connectionStatus">
-                        <span class="loading"></span> Connecting...
-                    </span>
-                </div>
+            <div>
+                <h1><img src="img/logo.svg" alt="Edulytics AI Logo"
+                        style="height: 50px; vertical-align: middle; margin-right: 15px;"></h1>
+                <p class="subtitle">AI-Powered Performance Prediction & Insights</p>
+            </div>
+            <div>
+                <span class="status-badge" id="connectionStatus">
+                    <span class="loading"></span> Connecting...
+                </span>
             </div>
         </header>
 
         <div class="nav-tabs">
             <button class="tab-btn active" onclick="showTab('dashboard')">Dashboard</button>
             <button class="tab-btn" onclick="showTab('upload')">Upload Data</button>
-            <button class="tab-btn" onclick="showTab('prediction')">Predict Performance</button>
-            <button class="tab-btn" onclick="showTab('analytics')">Analytics</button>
+            <button class="tab-btn" onclick="showTab('prediction')">Predict (AI)</button>
+            <button class="tab-btn" onclick="showTab('analytics')">Advanced Analytics</button>
             <button class="tab-btn" onclick="showTab('students')">Student List</button>
         </div>
 
         <!-- Dashboard Tab -->
         <div id="dashboard" class="tab-content active">
             <div id="dashboardAlert"></div>
-            
+
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-label">Total Students</div>
                     <div class="stat-value" id="totalStudents">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Avg. Attendance</div>
+                    <div class="stat-value" id="avgAttendance">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Avg. Study Hours</div>
+                    <div class="stat-value" id="avgStudyHours">0h</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Average Performance</div>
@@ -384,16 +84,16 @@
         <!-- Upload Tab -->
         <div id="upload" class="tab-content">
             <div class="card">
-                <h2>Upload Student Data</h2>
-                <p style="margin-bottom: 20px; color: #666;">
-                    Upload a CSV file with student data. Required columns: 
-                    <strong>student_id, attendance, study_hours, previous_grades, assignments_completed</strong>
-                </p>
-                
+                <h2>Upload Student Dataset</h2>
+                <div class="alert alert-info">
+                    ℹ️ Supported format: CSV with columns <strong>student_id, attendance, study_hours, previous_grades,
+                        assignments_completed</strong>.
+                </div>
+
                 <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
                     <h3>📁 Click to Upload CSV File</h3>
-                    <p style="margin-top: 10px; color: #666;">Upload your student dataset here</p>
-                    <input type="file" id="fileInput" accept=".csv" onchange="uploadFile(event)">
+                    <p style="margin-top: 10px; color: #64748b;">Drag and drop or click to browse</p>
+                    <input type="file" id="fileInput" accept=".csv" onchange="uploadFile(event)" style="display: none;">
                 </div>
 
                 <div id="uploadStatus" style="margin-top: 20px;"></div>
@@ -403,67 +103,100 @@
         <!-- Prediction Tab -->
         <div id="prediction" class="tab-content">
             <div class="card">
-                <h2>Predict Student Performance</h2>
-                <p style="margin-bottom: 20px; color: #666;">Enter student information to get ML-powered prediction</p>
+                <h2>AI Performance Predictor</h2>
+                <p style="margin-bottom: 20px; color: #64748b;">Enter student details to get a real-time prediction from
+                    the trained Random Forest model.</p>
 
-                <form id="predictionForm" onsubmit="predictPerformance(event)">
-                    <div class="form-group">
-                        <label>Attendance Rate (%)</label>
-                        <input type="number" id="attendance" min="0" max="100" required placeholder="e.g., 85">
-                    </div>
+                <div class="grid-2">
+                    <form id="predictionForm" onsubmit="predictPerformance(event)">
+                        <div class="form-group">
+                            <label>Attendance Rate (%)</label>
+                            <input type="number" id="attendance" min="0" max="100" required placeholder="85">
+                        </div>
 
-                    <div class="form-group">
-                        <label>Study Hours per Week</label>
-                        <input type="number" id="studyHours" min="0" max="168" required placeholder="e.g., 20">
-                    </div>
+                        <div class="form-group">
+                            <label>Study Hours per Week</label>
+                            <input type="number" id="studyHours" min="0" max="168" required placeholder="20">
+                        </div>
 
-                    <div class="form-group">
-                        <label>Previous Grades Average (%)</label>
-                        <input type="number" id="previousGrades" min="0" max="100" required placeholder="e.g., 75">
-                    </div>
+                        <div class="form-group">
+                            <label>Previous Grades Average (%)</label>
+                            <input type="number" id="previousGrades" min="0" max="100" required placeholder="75">
+                        </div>
 
-                    <div class="form-group">
-                        <label>Assignments Completed (%)</label>
-                        <input type="number" id="assignments" min="0" max="100" required placeholder="e.g., 90">
-                    </div>
+                        <div class="form-group">
+                            <label>Assignments Completed (%)</label>
+                            <input type="number" id="assignments" min="0" max="100" required placeholder="90">
+                        </div>
 
-                    <div class="form-group">
-                        <label>Participation Level</label>
-                        <select id="participation" required>
-                            <option value="">Select level</option>
-                            <option value="1">Low</option>
-                            <option value="2">Medium</option>
-                            <option value="3">High</option>
-                        </select>
-                    </div>
+                        <div class="form-group">
+                            <label>Participation Level</label>
+                            <select id="participation" required>
+                                <option value="">Select level...</option>
+                                <option value="1">Low</option>
+                                <option value="2">Medium</option>
+                                <option value="3">High</option>
+                            </select>
+                        </div>
 
-                    <button type="submit" class="btn" id="predictBtn">
-                        🎯 Predict Performance
-                    </button>
-                </form>
+                        <button type="submit" class="btn" id="predictBtn">
+                            🔮 Predict Performance
+                        </button>
+                    </form>
 
-                <div id="predictionResult"></div>
+                    <div id="predictionResult"></div>
+                </div>
             </div>
         </div>
 
         <!-- Analytics Tab -->
         <div id="analytics" class="tab-content">
             <div class="card">
-                <h2>Performance Analytics</h2>
+                <h2>Deep Analytics</h2>
                 <div id="analyticsAlert"></div>
-                
+
                 <div class="grid-2">
-                    <div class="card">
-                        <h3>Attendance vs Performance</h3>
+                    <div class="card" style="box-shadow: none; padding: 0;">
+                        <h3>Attendance Impact</h3>
                         <div class="chart-container">
                             <canvas id="attendanceChart"></canvas>
                         </div>
                     </div>
-                    <div class="card">
-                        <h3>Study Hours vs Performance</h3>
+                    <div class="card" style="box-shadow: none; padding: 0;">
+                        <h3>Study Effort Impact</h3>
                         <div class="chart-container">
                             <canvas id="studyChart"></canvas>
                         </div>
+                    </div>
+                </div>
+
+                <div class="grid-2" style="margin-top: 24px;">
+                    <div class="card" style="box-shadow: none; padding: 0;">
+                        <h3>Participation Breakdown</h3>
+                        <div class="chart-container">
+                            <canvas id="participationChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card" style="box-shadow: none; padding: 0;">
+                        <h3>Grades vs Assignments</h3>
+                        <div class="chart-container">
+                            <canvas id="assignmentChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 20px; border: 1px solid #e2e8f0; box-shadow: none;">
+                    <h3>🎓 Students by Major</h3>
+                    <div class="chart-container">
+                        <canvas id="majorChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 20px; border: 1px solid #e2e8f0; box-shadow: none;">
+                    <h3>🤖 Model Feature Importance</h3>
+                    <p class="subtitle">What factors drive the model's predictions the most?</p>
+                    <div class="chart-container">
+                        <canvas id="featureChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -472,306 +205,35 @@
         <!-- Students Tab -->
         <div id="students" class="tab-content">
             <div class="card">
-                <h2>Student Performance List</h2>
-                <div id="studentTable"></div>
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                    <h2>Student Registry</h2>
+                    <button class="btn btn-secondary" onclick="exportData()">
+                        ⬇️ Export CSV
+                    </button>
+                </div>
+
+                <div class="filters-bar">
+                    <input type="text" id="searchStudent" class="search-box" placeholder="🔍 Search by Student ID..."
+                        onkeyup="filterStudents()">
+
+                    <select id="riskFilter" style="margin-top: 0; width: auto;" onchange="filterStudents()">
+                        <option value="">All Risk Levels</option>
+                        <option value="Low">Low Risk</option>
+                        <option value="Medium">Medium Risk</option>
+                        <option value="High">High Risk</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <div id="studentTable"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
-        const API_URL = 'http://localhost:5000/api';
-        let charts = {};
-
-        async function checkConnection() {
-            try {
-                const response = await fetch('http://localhost:5000/');
-                if (response.ok) {
-                    document.getElementById('connectionStatus').innerHTML = 
-                        '✅ Connected to Backend';
-                    document.getElementById('connectionStatus').className = 'status-badge status-connected';
-                    return true;
-                }
-            } catch (error) {
-                document.getElementById('connectionStatus').innerHTML = 
-                    '❌ Backend Offline';
-                document.getElementById('connectionStatus').className = 'status-badge status-disconnected';
-                return false;
-            }
-        }
-
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-
-            if (tabName === 'dashboard') loadDashboard();
-            if (tabName === 'analytics') loadAnalytics();
-            if (tabName === 'students') loadStudents();
-        }
-
-        async function uploadFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const formData = new FormData();
-            formData.append('file', file);
-
-            document.getElementById('uploadStatus').innerHTML = 
-                '<div class="alert alert-info">⏳ Uploading...</div>';
-
-            try {
-                const response = await fetch(`${API_URL}/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    document.getElementById('uploadStatus').innerHTML = 
-                        `<div class="alert alert-success">
-                            ✅ ${data.message}<br>
-                            <strong>Total Students:</strong> ${data.total_students}
-                        </div>`;
-                    loadDashboard();
-                } else {
-                    document.getElementById('uploadStatus').innerHTML = 
-                        `<div class="alert alert-danger">❌ Error: ${data.error}</div>`;
-                }
-            } catch (error) {
-                document.getElementById('uploadStatus').innerHTML = 
-                    `<div class="alert alert-danger">❌ Failed to connect: ${error.message}</div>`;
-            }
-        }
-
-        async function predictPerformance(event) {
-            event.preventDefault();
-
-            const data = {
-                attendance: parseFloat(document.getElementById('attendance').value),
-                study_hours: parseFloat(document.getElementById('studyHours').value),
-                previous_grades: parseFloat(document.getElementById('previousGrades').value),
-                assignments_completed: parseFloat(document.getElementById('assignments').value),
-                participation: parseInt(document.getElementById('participation').value)
-            };
-
-            const btn = document.getElementById('predictBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="loading"></span> Predicting...';
-
-            try {
-                const response = await fetch(`${API_URL}/predict`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    const icons = { success: '🌟', warning: '⚠️', danger: '🚨' };
-                    
-                    let insightsHtml = '';
-                    if (result.insights && result.insights.length > 0) {
-                        insightsHtml = `
-                            <h3 style="margin-top: 20px;">Insights & Recommendations:</h3>
-                            <ul class="insights-list">
-                                ${result.insights.map(insight => `<li>💡 ${insight}</li>`).join('')}
-                            </ul>
-                        `;
-                    }
-
-                    document.getElementById('predictionResult').innerHTML = `
-                        <div class="prediction-result alert-${result.color}">
-                            ${icons[result.color]} <strong>${result.status}</strong><br>
-                            <div style="margin-top: 15px; font-size: 28px;">
-                                Predicted Score: ${result.predicted_score}%
-                            </div>
-                            <div style="margin-top: 10px; font-size: 16px;">
-                                ${result.recommendation}
-                            </div>
-                            <div style="margin-top: 10px;">
-                                <span class="risk-badge risk-${result.risk_level.toLowerCase()}">
-                                    ${result.risk_level} Risk
-                                </span>
-                            </div>
-                            ${insightsHtml}
-                        </div>
-                    `;
-                } else {
-                    document.getElementById('predictionResult').innerHTML = 
-                        `<div class="alert alert-danger">❌ ${result.error}</div>`;
-                }
-            } catch (error) {
-                document.getElementById('predictionResult').innerHTML = 
-                    `<div class="alert alert-danger">❌ Failed to connect: ${error.message}</div>`;
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '🎯 Predict Performance';
-            }
-        }
-
-        async function loadDashboard() {
-            try {
-                const response = await fetch(`${API_URL}/dashboard`);
-                const data = await response.json();
-
-                if (data.stats && data.stats.total_students > 0) {
-                    document.getElementById('totalStudents').textContent = data.stats.total_students;
-                    document.getElementById('avgPerformance').textContent = data.stats.average_performance + '%';
-                    document.getElementById('atRiskStudents').textContent = data.stats.at_risk_students;
-                    document.getElementById('highPerformers').textContent = data.stats.high_performers;
-
-                    createPerformanceChart(data.performance_distribution);
-                    createRiskChart(data.risk_distribution);
-
-                    document.getElementById('dashboardAlert').innerHTML = '';
-                } else {
-                    document.getElementById('dashboardAlert').innerHTML = 
-                        '<div class="alert alert-warning">⚠️ No data available. Please upload student data first.</div>';
-                }
-            } catch (error) {
-                document.getElementById('dashboardAlert').innerHTML = 
-                    '<div class="alert alert-danger">❌ Failed to load dashboard data</div>';
-            }
-        }
-
-        function createPerformanceChart(dist) {
-            const ctx = document.getElementById('performanceChart');
-            if (charts.performance) charts.performance.destroy();
-
-            charts.performance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(dist),
-                    datasets: [{
-                        label: 'Number of Students',
-                        data: Object.values(dist),
-                        backgroundColor: ['#dc3545', '#ffc107', '#17a2b8', '#28a745', '#20c997']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        }
-
-        function createRiskChart(dist) {
-            const ctx = document.getElementById('riskChart');
-            if (charts.risk) charts.risk.destroy();
-
-            charts.risk = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(dist),
-                    datasets: [{
-                        data: Object.values(dist),
-                        backgroundColor: ['#28a745', '#ffc107', '#dc3545']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        }
-
-        async function loadAnalytics() {
-            try {
-                const response = await fetch(`${API_URL}/analytics`);
-                const data = await response.json();
-
-                if (data.attendance_vs_performance) {
-                    createScatterChart('attendanceChart', 'Attendance vs Performance', 
-                        data.attendance_vs_performance, 'Attendance %', 'Performance %');
-                    createScatterChart('studyChart', 'Study Hours vs Performance', 
-                        data.study_hours_vs_performance, 'Study Hours', 'Performance %');
-
-                    document.getElementById('analyticsAlert').innerHTML = '';
-                } else {
-                    document.getElementById('analyticsAlert').innerHTML = 
-                        '<div class="alert alert-warning">⚠️ No analytics data available</div>';
-                }
-            } catch (error) {
-                document.getElementById('analyticsAlert').innerHTML = 
-                    '<div class="alert alert-danger">❌ Failed to load analytics</div>';
-            }
-        }
-
-        function createScatterChart(canvasId, title, data, xLabel, yLabel) {
-            const ctx = document.getElementById(canvasId);
-            if (charts[canvasId]) charts[canvasId].destroy();
-
-            charts[canvasId] = new Chart(ctx, {
-                type: 'scatter',
-                data: {
-                    datasets: [{
-                        label: title,
-                        data: data,
-                        backgroundColor: 'rgba(102, 126, 234, 0.6)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { title: { display: true, text: xLabel } },
-                        y: { title: { display: true, text: yLabel } }
-                    }
-                }
-            });
-        }
-
-        async function loadStudents() {
-            try {
-                const response = await fetch(`${API_URL}/students`);
-                const data = await response.json();
-
-                if (data.students && data.students.length > 0) {
-                    let html = `
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Student ID</th>
-                                    <th>Attendance</th>
-                                    <th>Study Hours</th>
-                                    <th>Performance</th>
-                                    <th>Risk Level</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                    `;
-
-                    data.students.forEach(s => {
-                        html += `
-                            <tr>
-                                <td>${s.student_id}</td>
-                                <td>${s.attendance.toFixed(1)}%</td>
-                                <td>${s.study_hours.toFixed(1)} hrs</td>
-                                <td>${s.performance.toFixed(1)}%</td>
-                                <td><span class="risk-badge risk-${s.risk_level.toLowerCase()}">${s.risk_level}</span></td>
-                            </tr>
-                        `;
-                    });
-
-                    html += '</tbody></table>';
-                    document.getElementById('studentTable').innerHTML = html;
-                } else {
-                    document.getElementById('studentTable').innerHTML = 
-                        '<div class="alert alert-warning">⚠️ No student data available</div>';
-                }
-            } catch (error) {
-                document.getElementById('studentTable').innerHTML = 
-                    '<div class="alert alert-danger">❌ Failed to load students</div>';
-            }
-        }
-
-        window.onload = async function() {
-            await checkConnection();
-            loadDashboard();
-        };
-    </script>
+    <!-- Custom JS -->
+    <script src="js/main.js"></script>
 </body>
+
 </html>

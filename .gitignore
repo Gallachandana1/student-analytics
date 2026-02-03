@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+venv/
+env/
+
+# Data
+students.db
+*.sqlite3
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Large files (Optional, keeping models for demo ease-of-use if small enough)
+# *.pkl
