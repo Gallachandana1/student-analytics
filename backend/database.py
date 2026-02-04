@@ -2,7 +2,8 @@ import sqlite3
 import pandas as pd
 import os
 
-DB_NAME = "students.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_NAME = os.path.join(BASE_DIR, "students.db")
 
 def init_db():
     """Initialize the database with the students table"""

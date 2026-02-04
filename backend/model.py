@@ -5,8 +5,9 @@ import os
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 
-MODEL_FILE = "student_model.pkl"
-SCALER_FILE = "scaler.pkl"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_FILE = os.path.join(BASE_DIR, "student_model.pkl")
+SCALER_FILE = os.path.join(BASE_DIR, "scaler.pkl")
 
 class StudentModel:
     def __init__(self):

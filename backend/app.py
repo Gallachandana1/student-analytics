@@ -10,7 +10,9 @@ import csv
 from database import init_db, add_students, get_all_students, get_student_dataframe, clear_data
 from model import StudentModel
 
-app = Flask(__name__, static_folder='../frontend', static_url_path='')
+app = Flask(__name__, 
+            static_folder=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend')), 
+            static_url_path='')
 # Enable CORS for frontend communication
 CORS(app)
 
